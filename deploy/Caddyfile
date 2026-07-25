@@ -1,0 +1,45 @@
+# Единая точка входа. Frontend и backend живут на одном домене,
+# поэтому браузер считает их одним источником и CORS не требуется.
+#
+# SITE_ADDRESS = ":80"        — работа по IP-адресу без сертификата
+# SITE_ADDRESS = "dzen.ru"    — Caddy сам получит сертификат Let's Encrypt
+
+{$SITE_ADDRESS} {
+	encode gzip zstd
+
+	# Служебные и API-маршруты уходят на FastAPI
+	handle /api/* {
+		reverse_proxy backend:8000
+	}
+	handle /docs* {
+		reverse_proxy backend:8000
+	}
+	handle /redoc* {
+		reverse_proxy backend:8000
+	}
+	handle /openapi.json {
+		reverse_proxy backend:8000
+	}
+	handle /health {
+		reverse_proxy backend:8000
+	}
+
+	# Всё остальное — интерфейс Next.js
+	handle {
+		reverse_proxy frontend:3000
+	}
+
+	header {
+		X-Content-Type-Options nosniff
+		X-Frame-Options SAMEORIGIN
+		Referrer-Policy strict-origin-when-cross-origin
+		-Server
+	}
+
+	log {
+		output file /data/access.log {
+			roll_size 10MiB
+			roll_keep 5
+		}
+	}
+}

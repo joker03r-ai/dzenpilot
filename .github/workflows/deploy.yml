@@ -1,0 +1,209 @@
+name: Тесты и деплой
+
+# Запускается автоматически при каждом коммите в ветку main,
+# а также вручную кнопкой Run workflow на вкладке Actions.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Два деплоя одновременно не запускаются: следующий ждёт окончания текущего.
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  tests:
+    name: Проверка кода
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: dzenpilot
+          POSTGRES_PASSWORD: dzenpilot
+          POSTGRES_DB: dzenpilot
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U dzenpilot"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    steps:
+      - name: Получить код
+        uses: actions/checkout@v4
+
+      - name: Установить Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
+
+      - name: Установить зависимости backend
+        working-directory: backend
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Проверить, что миграции применяются
+        working-directory: backend
+        env:
+          POSTGRES_HOST: localhost
+          POSTGRES_USER: dzenpilot
+          POSTGRES_PASSWORD: dzenpilot
+          POSTGRES_DB: dzenpilot
+          SECRET_KEY: ci-secret-key-not-used-in-production
+        run: alembic upgrade head
+
+      - name: Запустить тесты backend
+        working-directory: backend
+        env:
+          POSTGRES_HOST: localhost
+          POSTGRES_USER: dzenpilot
+          POSTGRES_PASSWORD: dzenpilot
+          POSTGRES_DB: dzenpilot
+          REDIS_URL: redis://localhost:6379/0
+          SECRET_KEY: ci-secret-key-not-used-in-production
+          SEED_DEMO_DATA: 'false'
+        run: pytest
+
+      - name: Установить Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: frontend/package.json
+
+      - name: Установить зависимости frontend
+        working-directory: frontend
+        run: npm install
+
+      - name: Проверить типы frontend
+        working-directory: frontend
+        run: npm run typecheck
+
+      - name: Собрать frontend
+        working-directory: frontend
+        env:
+          NEXT_PUBLIC_API_URL: ''
+        run: npm run build
+
+  deploy:
+    name: Деплой на сервер
+    needs: tests
+    runs-on: ubuntu-latest
+    # На сервер уходит только ветка main
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Получить код
+        uses: actions/checkout@v4
+
+      - name: Подготовить SSH-ключ
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -p "${SSH_PORT:-22}" -H "$SSH_HOST" >> ~/.ssh/known_hosts 2>/dev/null
+
+      - name: Скопировать файлы на сервер
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+        run: |
+          TARGET="${DEPLOY_PATH:-/opt/dzenpilot}"
+          PORT="${SSH_PORT:-22}"
+
+          ssh -i ~/.ssh/deploy_key -p "$PORT" "$SSH_USER@$SSH_HOST" "mkdir -p $TARGET"
+
+          # .env на сервере не трогаем: там боевые ключи, они не хранятся в репозитории
+          rsync -az --delete \
+            -e "ssh -i ~/.ssh/deploy_key -p $PORT" \
+            --exclude '.git' \
+            --exclude '.github' \
+            --exclude '.env' \
+            --exclude 'node_modules' \
+            --exclude '.next' \
+            --exclude '__pycache__' \
+            --exclude '*.pyc' \
+            --exclude '.venv' \
+            --exclude '.pytest_cache' \
+            ./ "$SSH_USER@$SSH_HOST:$TARGET/"
+
+      - name: Пересобрать и перезапустить сервисы
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+        run: |
+          TARGET="${DEPLOY_PATH:-/opt/dzenpilot}"
+          PORT="${SSH_PORT:-22}"
+
+          ssh -i ~/.ssh/deploy_key -p "$PORT" "$SSH_USER@$SSH_HOST" bash -euo pipefail <<EOF
+            cd "$TARGET"
+
+            if [ ! -f .env ]; then
+              echo "ОШИБКА: на сервере нет файла .env"
+              echo "Создайте его один раз: cp .env.example .env и заполните значения"
+              exit 1
+            fi
+
+            # Резервная копия базы перед обновлением
+            if docker ps --format '{{.Names}}' | grep -q dzenpilot_postgres; then
+              mkdir -p backups
+              docker exec dzenpilot_postgres pg_dumpall -U "\$(grep '^POSTGRES_USER=' .env | cut -d= -f2)" \
+                > "backups/before-deploy-\$(date +%Y%m%d-%H%M%S).sql" || echo "Не удалось создать копию, продолжаю"
+              ls -1t backups/*.sql 2>/dev/null | tail -n +11 | xargs -r rm --
+            fi
+
+            docker compose -f docker-compose.prod.yml up -d --build --remove-orphans
+            docker image prune -f
+          EOF
+
+      - name: Проверить, что сервис отвечает
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+        run: |
+          PORT="${SSH_PORT:-22}"
+          for attempt in $(seq 1 20); do
+            if ssh -i ~/.ssh/deploy_key -p "$PORT" "$SSH_USER@$SSH_HOST" \
+                 "curl -fsS http://localhost/health" > /tmp/health.json 2>/dev/null; then
+              echo "Сервис отвечает:"
+              cat /tmp/health.json
+              exit 0
+            fi
+            echo "Попытка $attempt из 20: сервис ещё поднимается…"
+            sleep 10
+          done
+          echo "Сервис не ответил за 200 секунд. Логи:"
+          ssh -i ~/.ssh/deploy_key -p "$PORT" "$SSH_USER@$SSH_HOST" \
+            "cd ${DEPLOY_PATH:-/opt/dzenpilot} && docker compose -f docker-compose.prod.yml logs --tail=80"
+          exit 1
+
+      - name: Убрать ключ
+        if: always()
+        run: rm -f ~/.ssh/deploy_key
