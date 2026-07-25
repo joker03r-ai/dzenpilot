@@ -316,3 +316,85 @@ export interface CompareResponse {
   chart: ComparePoint[];
   note: string;
 }
+
+// ---------- Темы ----------
+
+export type TopicStatus =
+  | 'suggested'
+  | 'saved'
+  | 'planned'
+  | 'in_progress'
+  | 'used'
+  | 'hidden';
+export type TopicOrigin = 'ai_search' | 'manual' | 'csv_import' | 'competitor_gap';
+export type CompetitionLevel = 'low' | 'medium' | 'high';
+export type TopicGoal = 'views' | 'subscribers' | 'leads' | 'income';
+
+export interface ScoreBreakdown {
+  interest: number;
+  growth: number;
+  competition: number;
+  seasonality: number;
+  competitor_success: number;
+  series_potential: number;
+  commercial: number;
+  difficulty: number;
+  decay_risk: number;
+  audience_fit: number;
+}
+
+export interface TopicScore {
+  total_score: number;
+  verdict: string;
+  explanation: string;
+  breakdown: ScoreBreakdown;
+  formula_version: string;
+  created_at: string;
+}
+
+export interface Topic {
+  id: string;
+  project_id: string;
+  title: string;
+  description: string | null;
+  niche: string | null;
+  audience: string | null;
+  region: string | null;
+  format: string | null;
+  competition_level: CompetitionLevel | null;
+  seasonality: string | null;
+  recommended_length: number | null;
+
+  title_variants: string[];
+  reader_questions: string[];
+  series_ideas: string[];
+  monetization: string[];
+  risks: string[];
+  sources: string[];
+
+  status: TopicStatus;
+  origin: TopicOrigin;
+  created_at: string;
+  updated_at: string;
+
+  score: TopicScore | null;
+}
+
+export interface TopicSearchRequest {
+  niche: string;
+  audience?: string | null;
+  region?: string | null;
+  format?: string | null;
+  period_days: number;
+  forbidden_topics: string[];
+  competition_level?: CompetitionLevel | null;
+  goal: TopicGoal;
+  count: number;
+}
+
+export interface TopicSearchResponse {
+  created: number;
+  topics: Topic[];
+  message: string;
+  sources_note: string;
+}

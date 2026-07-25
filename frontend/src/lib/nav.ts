@@ -37,7 +37,6 @@ export const NAV_ITEMS: NavItem[] = [
     label: 'Поиск тем',
     description: 'Перспективные темы с оценкой от 0 до 100',
     icon: Lightbulb,
-    stage: 4,
   },
   {
     href: '/articles',
