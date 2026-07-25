@@ -2,21 +2,26 @@ import { cn } from '@/lib/utils';
 
 interface AiMarkProps {
   size?: 'sm' | 'md' | 'lg';
+  /**
+   * По умолчанию знак однотонный.
+   *
+   * Градиентный вариант включается точечно и только там, где на экране
+   * нет других градиентов: правило — не больше двух на экран, а главная
+   * кнопка действия уже занимает одно место.
+   */
+  tone?: 'solid' | 'gradient';
   className?: string;
 }
 
-/**
- * Знак сервиса — небольшая AI-иллюстрация.
- * Одно из немногих мест, где градиент разрешён по дизайн-правилам.
- */
-export function AiMark({ size = 'md', className }: AiMarkProps) {
-  const box = size === 'sm' ? 'size-7' : size === 'lg' ? 'size-11' : 'size-9';
-  const glyph = size === 'sm' ? 'size-3.5' : size === 'lg' ? 'size-5.5' : 'size-4.5';
+export function AiMark({ size = 'md', tone = 'solid', className }: AiMarkProps) {
+  const box = size === 'sm' ? 'size-7' : size === 'lg' ? 'size-10' : 'size-9';
+  const glyph = size === 'sm' ? 'size-4' : size === 'lg' ? 'size-5' : 'size-[18px]';
 
   return (
     <span
       className={cn(
-        'gradient-ai-mark flex shrink-0 items-center justify-center rounded-md text-white',
+        'flex shrink-0 items-center justify-center rounded-md text-white',
+        tone === 'gradient' ? 'gradient-ai-mark' : 'bg-primary',
         box,
         className,
       )}

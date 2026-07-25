@@ -39,7 +39,7 @@ export function ScheduleChip({ projectId, item, compact = false }: ScheduleChipP
       className={cn(
         'rounded-md border p-2 text-left text-xs transition-shadow',
         STATUS_TONE[item.status] ?? STATUS_TONE.planned,
-        draggable && 'cursor-grab active:cursor-grabbing hover:shadow-card',
+        draggable && 'cursor-grab active:cursor-grabbing hover:shadow-soft',
       )}
       title={draggable ? 'Перетащите на другой день, чтобы перенести' : undefined}
     >
