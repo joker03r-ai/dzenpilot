@@ -1,0 +1,31 @@
+# --- Веб-фреймворк ---
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+python-multipart==0.0.20
+
+# --- Данные ---
+sqlalchemy==2.0.36
+asyncpg==0.30.0
+alembic==1.14.0
+greenlet==3.1.1
+
+# --- Валидация и настройки ---
+pydantic==2.10.4
+pydantic-settings==2.7.0
+email-validator==2.2.0
+
+# --- Безопасность ---
+pyjwt==2.10.1
+bcrypt==4.2.1
+cryptography==44.0.0
+
+# --- Кэш и очередь ---
+redis==5.2.1
+celery==5.4.0
+
+# --- HTTP-клиент (используется провайдерами ИИ) ---
+httpx==0.28.1
+
+# --- Тесты ---
+pytest==8.3.4
+pytest-asyncio==0.25.0
