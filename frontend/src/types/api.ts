@@ -398,3 +398,139 @@ export interface TopicSearchResponse {
   message: string;
   sources_note: string;
 }
+
+// ---------- Статьи ----------
+
+export type ArticleStatus =
+  | 'draft'
+  | 'review'
+  | 'ready'
+  | 'scheduled'
+  | 'published'
+  | 'failed'
+  | 'archived';
+
+export type ImproveAction =
+  | 'shorten'
+  | 'expand'
+  | 'simplify'
+  | 'expertise'
+  | 'change_tone'
+  | 'rewrite_fragment'
+  | 'add_examples'
+  | 'remove_repeats'
+  | 'check_structure'
+  | 'check_title'
+  | 'check_clickability'
+  | 'check_readability'
+  | 'find_unverified'
+  | 'image_description'
+  | 'image_prompts';
+
+export interface ArticleCreateInput {
+  title: string;
+  topic_id?: string | null;
+  goal?: string | null;
+  audience?: string | null;
+  tone?: string | null;
+  target_length: number;
+  keywords: string[];
+  region?: string | null;
+  required_facts: string[];
+  source_links: string[];
+  products: string[];
+  forbidden_words: string[];
+  cta?: string | null;
+}
+
+export interface OutlineSection {
+  heading: string;
+  points: string[];
+}
+
+export interface OutlineResponse {
+  title_variants: string[];
+  lead: string;
+  sections: OutlineSection[];
+  conclusion: string;
+  cta: string;
+  message: string;
+}
+
+export interface Article {
+  id: string;
+  project_id: string;
+  topic_id: string | null;
+  title: string;
+  lead: string | null;
+  body_markdown: string | null;
+  outline: OutlineSection[];
+  keywords: string[];
+  cta: string | null;
+  goal: string | null;
+  audience: string | null;
+  tone: string | null;
+  target_length: number | null;
+  status: ArticleStatus;
+  status_label: string;
+  checklist: Record<string, unknown>;
+  generation_input: Record<string, unknown>;
+  planned_publish_at: string | null;
+  published_at: string | null;
+  published_url: string | null;
+  ai_provider: string | null;
+  ai_model: string | null;
+  tokens_input: number | null;
+  tokens_output: number | null;
+  cost_usd: number | null;
+  word_count: number | null;
+  reading_time_min: number | null;
+  created_at: string;
+  updated_at: string;
+  versions_count: number;
+}
+
+export interface ArticleListItem {
+  id: string;
+  title: string;
+  status: ArticleStatus;
+  status_label: string;
+  word_count: number | null;
+  reading_time_min: number | null;
+  planned_publish_at: string | null;
+  published_at: string | null;
+  updated_at: string;
+  created_at: string;
+}
+
+export interface ArticleVersion {
+  id: string;
+  article_id: string;
+  version_number: number;
+  title: string | null;
+  lead: string | null;
+  change_note: string | null;
+  created_at: string;
+}
+
+export interface ImproveResponse {
+  action: string;
+  action_label: string;
+  changes_text: boolean;
+  result: string;
+  applied: boolean;
+  message: string;
+}
+
+export interface ChecklistItem {
+  code: string;
+  label: string;
+  done: boolean;
+  hint: string;
+}
+
+export interface ChecklistResponse {
+  items: ChecklistItem[];
+  ready: boolean;
+  message: string;
+}

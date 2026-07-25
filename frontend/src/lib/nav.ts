@@ -43,7 +43,6 @@ export const NAV_ITEMS: NavItem[] = [
     label: 'Статьи',
     description: 'Библиотека статей и мастер создания',
     icon: FileText,
-    stage: 5,
   },
   {
     href: '/calendar',
