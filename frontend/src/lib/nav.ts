@@ -49,7 +49,6 @@ export const NAV_ITEMS: NavItem[] = [
     label: 'Контент-календарь',
     description: 'План публикаций по датам и часовым поясам',
     icon: CalendarDays,
-    stage: 6,
   },
   {
     href: '/analytics',

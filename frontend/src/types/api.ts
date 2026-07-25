@@ -534,3 +534,64 @@ export interface ChecklistResponse {
   ready: boolean;
   message: string;
 }
+
+// ---------- Календарь ----------
+
+export type CalendarView = 'day' | 'week' | 'month' | 'list';
+export type RepeatRule = 'none' | 'daily' | 'weekly' | 'biweekly' | 'monthly';
+export type ScheduleStatus =
+  | 'planned'
+  | 'ready'
+  | 'publishing'
+  | 'published'
+  | 'failed'
+  | 'cancelled';
+
+export interface ScheduleItem {
+  id: string;
+  project_id: string;
+  article_id: string;
+  article_title: string;
+  article_status: string;
+  channel_id: string | null;
+  scheduled_at: string;
+  local_datetime: string;
+  local_date: string;
+  local_time: string;
+  timezone: string;
+  timezone_label: string;
+  repeat_rule: string | null;
+  note: string | null;
+  confirmed_by_user: boolean;
+  status: ScheduleStatus;
+  status_label: string;
+  attempts: number;
+  created_at: string;
+}
+
+export interface CalendarResponse {
+  view: CalendarView;
+  period_start: string;
+  period_end: string;
+  timezone: string;
+  timezone_label: string;
+  items: ScheduleItem[];
+  note: string;
+}
+
+export interface CalendarOptions {
+  default: string;
+  popular: TimezoneOption[];
+  all: string[];
+  repeat_rules: { value: RepeatRule; label: string }[];
+}
+
+export interface ScheduleCreateInput {
+  article_id: string;
+  local_datetime: string;
+  timezone: string;
+  channel_id?: string | null;
+  repeat_rule: RepeatRule;
+  repeat_count: number;
+  note?: string | null;
+}

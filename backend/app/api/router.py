@@ -6,6 +6,7 @@ from app.api.v1 import (
     ai,
     articles,
     auth,
+    calendar,
     competitors,
     integrations,
     jobs,
@@ -20,6 +21,7 @@ api_router.include_router(projects.router, prefix="/projects", tags=["Проек
 api_router.include_router(competitors.router, prefix="/projects", tags=["Конкуренты"])
 api_router.include_router(topics.router, prefix="/projects", tags=["Темы"])
 api_router.include_router(articles.router, prefix="/projects", tags=["Статьи"])
+api_router.include_router(calendar.router, prefix="/projects", tags=["Календарь"])
 api_router.include_router(integrations.router, prefix="/projects", tags=["Интеграции"])
 api_router.include_router(ai.router, prefix="/ai", tags=["ИИ"])
 api_router.include_router(jobs.router, prefix="/jobs", tags=["Фоновые задачи"])
