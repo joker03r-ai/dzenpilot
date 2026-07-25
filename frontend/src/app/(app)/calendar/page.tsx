@@ -1,6 +1,7 @@
 'use client';
 
-import { CalendarDays, ChevronLeft, ChevronRight, Plus, Sparkles } from 'lucide-react';
+import { CalendarDays, ChevronLeft, ChevronRight, Plus, Send, Sparkles } from 'lucide-react';
+import Link from 'next/link';
 import { useState } from 'react';
 
 import { ScheduleChip } from '@/components/calendar/schedule-chip';
@@ -115,17 +116,26 @@ export default function CalendarPage() {
         title="Контент-календарь"
         description="План публикаций по датам. Записи переносятся мышью — просто перетащите на другой день."
         action={
-          <ScheduleDialog
-            projectId={projectId}
-            defaultDate={anchor}
-            defaultTimezone={activeTimezone}
-            trigger={
-              <Button size="lg">
-                <Plus aria-hidden />
-                Запланировать публикацию
-              </Button>
-            }
-          />
+          <div className="flex flex-wrap gap-2">
+            <Button asChild variant="outline" size="lg">
+              <Link href="/publications">
+                <Send aria-hidden />
+                Публикация и журнал
+              </Link>
+            </Button>
+
+            <ScheduleDialog
+              projectId={projectId}
+              defaultDate={anchor}
+              defaultTimezone={activeTimezone}
+              trigger={
+                <Button size="lg">
+                  <Plus aria-hidden />
+                  Запланировать
+                </Button>
+              }
+            />
+          </div>
         }
       />
 

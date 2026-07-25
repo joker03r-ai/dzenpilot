@@ -595,3 +595,67 @@ export interface ScheduleCreateInput {
   repeat_count: number;
   note?: string | null;
 }
+
+// ---------- Публикации ----------
+
+export type PublicationMethod =
+  | 'official_api'
+  | 'partner_service'
+  | 'manual_export'
+  | 'copy_formatted'
+  | 'file_export'
+  | 'reminder';
+
+export type PublicationResult = 'success' | 'error' | 'skipped';
+
+export interface PreflightCheck {
+  code: string;
+  label: string;
+  passed: boolean;
+  detail: string;
+}
+
+export interface PreflightResponse {
+  checks: PreflightCheck[];
+  ready: boolean;
+  available_methods: { value: PublicationMethod; label: string }[];
+  message: string;
+}
+
+export interface PublishResponse {
+  log_id: string;
+  method: PublicationMethod;
+  method_label: string;
+  result: PublicationResult;
+  published_url: string | null;
+  error_message: string | null;
+  can_retry: boolean;
+  payload: Record<string, string>;
+  message: string;
+  next_step: string;
+}
+
+export interface PublicationLogItem {
+  id: string;
+  article_id: string;
+  article_title: string;
+  scheduled_publication_id: string | null;
+  method: PublicationMethod;
+  method_label: string;
+  result: PublicationResult;
+  result_label: string;
+  published_url: string | null;
+  error_message: string | null;
+  attempt_number: number;
+  response_payload: Record<string, unknown>;
+  started_at: string | null;
+  finished_at: string | null;
+  created_at: string;
+}
+
+export interface ExportResponse {
+  format: string;
+  filename: string;
+  content: string;
+  message: string;
+}
