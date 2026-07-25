@@ -659,3 +659,100 @@ export interface ExportResponse {
   content: string;
   message: string;
 }
+
+// ---------- Аналитика ----------
+
+export type AnalyticsPeriod = '7d' | '30d' | '90d' | 'custom';
+
+export interface MetricValue {
+  value: number | null;
+  change_percent: number | null;
+  available: boolean;
+  note: string | null;
+}
+
+export interface AnalyticsOverview {
+  period_start: string;
+  period_end: string;
+  published_articles: MetricValue;
+  total_views: MetricValue;
+  avg_views: MetricValue;
+  subscribers: MetricValue;
+  avg_engagement: MetricValue;
+  publish_frequency: MetricValue;
+  data_source_note: string;
+}
+
+export interface TimeseriesPoint {
+  day: string;
+  views: number | null;
+  subscribers: number | null;
+  published: number;
+}
+
+export interface TimeseriesResponse {
+  points: TimeseriesPoint[];
+  has_data: boolean;
+  note: string;
+}
+
+export interface WeekdayStat {
+  weekday: number;
+  label: string;
+  published: number;
+  avg_views: number | null;
+}
+
+export interface HourStat {
+  hour: number;
+  label: string;
+  published: number;
+  avg_views: number | null;
+}
+
+export interface TopArticle {
+  article_id: string;
+  title: string;
+  views: number | null;
+  published_at: string | null;
+  reading_time_min: number | null;
+}
+
+export interface TopTopic {
+  title: string;
+  articles: number;
+  avg_views: number | null;
+}
+
+export interface TopTitleWord {
+  word: string;
+  count: number;
+  avg_views: number | null;
+}
+
+export interface AnalyticsTop {
+  articles: TopArticle[];
+  topics: TopTopic[];
+  title_words: TopTitleWord[];
+  note: string;
+}
+
+export interface CompetitorComparisonRow {
+  name: string;
+  avg_views: number | null;
+  publications: number;
+  is_you: boolean;
+}
+
+export interface AnalyticsComparison {
+  rows: CompetitorComparisonRow[];
+  note: string;
+}
+
+export interface CsvImportSummary {
+  created: number;
+  updated: number;
+  skipped: number;
+  errors: string[];
+  message: string;
+}

@@ -55,7 +55,6 @@ export const NAV_ITEMS: NavItem[] = [
     label: 'Аналитика',
     description: 'Просмотры, подписчики и сравнение с конкурентами',
     icon: BarChart3,
-    stage: 8,
   },
   {
     href: '/integrations',

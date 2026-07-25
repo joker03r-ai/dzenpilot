@@ -4,6 +4,7 @@ from fastapi import APIRouter
 
 from app.api.v1 import (
     ai,
+    analytics,
     articles,
     auth,
     calendar,
@@ -24,6 +25,7 @@ api_router.include_router(topics.router, prefix="/projects", tags=["Темы"])
 api_router.include_router(articles.router, prefix="/projects", tags=["Статьи"])
 api_router.include_router(calendar.router, prefix="/projects", tags=["Календарь"])
 api_router.include_router(publications.router, prefix="/projects", tags=["Публикации"])
+api_router.include_router(analytics.router, prefix="/projects", tags=["Аналитика"])
 api_router.include_router(integrations.router, prefix="/projects", tags=["Интеграции"])
 api_router.include_router(ai.router, prefix="/ai", tags=["ИИ"])
 api_router.include_router(jobs.router, prefix="/jobs", tags=["Фоновые задачи"])
