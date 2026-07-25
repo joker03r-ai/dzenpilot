@@ -187,7 +187,9 @@ class ArticleResponse(ORMModel):
     tone: str | None
     target_length: int | None
     status: ArticleStatus
-    status_label: str
+    # Русская подпись статуса подставляется сервисом после разбора модели,
+    # поэтому у поля есть значение по умолчанию.
+    status_label: str = ""
     checklist: dict[str, Any]
     generation_input: dict[str, Any]
     planned_publish_at: datetime | None
@@ -209,7 +211,7 @@ class ArticleListItem(ORMModel):
     id: uuid.UUID
     title: str
     status: ArticleStatus
-    status_label: str
+    status_label: str = ""
     word_count: int | None
     reading_time_min: int | None
     planned_publish_at: datetime | None

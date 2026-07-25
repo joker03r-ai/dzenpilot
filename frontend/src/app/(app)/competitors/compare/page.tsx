@@ -129,8 +129,8 @@ function CompareContent() {
                     />
                     <YAxis tick={{ fontSize: 12 }} stroke="hsl(220 10% 45%)" tickLine={false} />
                     <Tooltip
-                      formatter={(value: number | null) =>
-                        value === null ? NO_DATA : formatNumber(value)
+                      formatter={(value) =>
+                        typeof value === 'number' ? formatNumber(value) : NO_DATA
                       }
                       labelStyle={{ fontWeight: 600 }}
                       contentStyle={{ borderRadius: 12, border: '1px solid hsl(220 14% 90%)' }}

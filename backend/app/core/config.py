@@ -46,7 +46,14 @@ class Settings(BaseSettings):
     cookie_domain: str | None = None
     access_cookie_name: str = "dp_access"
     refresh_cookie_name: str = "dp_refresh"
-    cors_origins: list[str] = Field(default_factory=lambda: ["http://localhost:3000"])
+
+    # Хранится строкой, а не списком: значения из .env вида
+    # "http://a,http://b" библиотека настроек пытается разобрать как JSON
+    # и падает ещё до валидации. Разбор делается в свойстве cors_origins.
+    cors_origins_raw: str = Field(
+        default="http://localhost:3000",
+        validation_alias="CORS_ORIGINS",
+    )
 
     # ---------- Ограничение частоты ----------
     rate_limit_default_per_minute: int = 120
@@ -67,13 +74,10 @@ class Settings(BaseSettings):
     seed_user_email: str = "demo@dzenpilot.ru"
     seed_user_password: str = "demo12345"
 
-    @field_validator("cors_origins", mode="before")
-    @classmethod
-    def _split_origins(cls, value: object) -> object:
-        """CORS_ORIGINS в .env задаётся строкой через запятую."""
-        if isinstance(value, str):
-            return [item.strip() for item in value.split(",") if item.strip()]
-        return value
+    @property
+    def cors_origins(self) -> list[str]:
+        """CORS_ORIGINS задаётся строкой через запятую."""
+        return [item.strip() for item in self.cors_origins_raw.split(",") if item.strip()]
 
     @field_validator("cookie_domain", mode="before")
     @classmethod
