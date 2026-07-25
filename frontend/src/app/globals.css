@@ -2,44 +2,80 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+  Дизайн-система DzenPilot.
+
+  Принцип: светлый однотонный интерфейс, ограниченное число акцентов.
+  Градиент разрешён только в пяти местах — главная кнопка, небольшая
+  AI-иллюстрация, индикатор генерации, активный статус ИИ и один
+  декоративный элемент hero-блока. На экране их не больше двух.
+  Все остальные поверхности однотонные.
+*/
+
 @layer base {
   :root {
-    /* Светлая премиальная тема: белые карточки на светло-сером фоне */
-    --background: 220 20% 97%;
-    --foreground: 222 30% 12%;
+    /* Фон: белый и холодный светло-серый */
+    --background: 220 33% 97%;
+    --surface: 220 30% 98%;
+
+    /* Текст: графит и тёмно-синий */
+    --foreground: 222 44% 13%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222 30% 12%;
+    --card-foreground: 222 44% 13%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222 30% 12%;
+    --popover-foreground: 222 44% 13%;
 
-    --primary: 231 65% 52%;
+    /* Фирменный насыщенный синий */
+    --primary: 221 83% 53%;
+    --primary-hover: 221 83% 47%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 220 16% 94%;
-    --secondary-foreground: 222 25% 20%;
+    --secondary: 220 22% 95%;
+    --secondary-foreground: 222 35% 22%;
 
-    --muted: 220 16% 95%;
-    --muted-foreground: 220 10% 45%;
+    --muted: 220 22% 96%;
+    --muted-foreground: 220 14% 46%;
 
-    --accent: 231 100% 96%;
-    --accent-foreground: 231 65% 40%;
+    --accent: 221 90% 97%;
+    --accent-foreground: 221 76% 42%;
 
-    --destructive: 0 72% 51%;
-    --destructive-foreground: 0 0% 100%;
+    /* Дополнительные AI-акценты: фиолетовый и голубой.
+       Используются точечно, не как фон рабочих областей. */
+    --ai-violet: 258 78% 62%;
+    --ai-cyan: 197 84% 52%;
+    /* Очень слабый сиреневый — только декоративные детали */
+    --ai-lilac: 262 60% 96%;
 
-    --success: 152 58% 38%;
+    /* Спокойный зелёный для успеха и роста */
+    --success: 152 52% 38%;
     --success-foreground: 0 0% 100%;
 
-    --warning: 38 92% 50%;
-    --warning-foreground: 30 40% 15%;
+    /* Мягкий красный для ошибок */
+    --destructive: 0 68% 55%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 220 14% 90%;
-    --input: 220 14% 88%;
-    --ring: 231 65% 52%;
+    /* Тёплое предупреждение без агрессии */
+    --warning: 38 88% 46%;
+    --warning-foreground: 32 45% 18%;
 
-    --radius: 0.875rem;
+    /* Тонкие нейтральные границы */
+    --border: 220 18% 91%;
+    --border-strong: 220 16% 85%;
+    --input: 220 18% 88%;
+    --ring: 221 83% 53%;
+
+    /* Боковое меню: глубокий однотонный тёмно-синий, без градиента */
+    --sidebar: 223 47% 15%;
+    --sidebar-foreground: 220 30% 88%;
+    --sidebar-muted: 220 14% 60%;
+    --sidebar-border: 223 33% 25%;
+    --sidebar-active: 221 62% 26%;
+    --sidebar-active-foreground: 0 0% 100%;
+
+    /* Скругления 10–14 px */
+    --radius: 0.75rem;
   }
 }
 
@@ -48,25 +84,141 @@
     @apply border-border;
   }
 
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
   body {
     @apply bg-background text-foreground antialiased;
+    font-family:
+      'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI Variable Display', 'Segoe UI',
+      Roboto, 'Helvetica Neue', Arial, sans-serif;
     font-feature-settings: 'liga' 1, 'calt' 1;
+    letter-spacing: -0.006em;
   }
 
   h1,
   h2,
-  h3 {
-    @apply tracking-tight;
+  h3,
+  h4 {
+    @apply font-semibold text-foreground;
+    letter-spacing: -0.022em;
   }
 }
 
 @layer components {
-  .surface-card {
-    @apply rounded-lg border border-border bg-card shadow-card;
+  /* Базовая непрозрачная поверхность. Карточки, формы и таблицы
+     всегда читаемые, без прозрачности и без свечения. */
+  .surface {
+    @apply rounded-lg border border-border bg-card;
   }
 
   .focus-ring {
-    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background;
+    @apply outline-none ring-offset-background transition-shadow
+           focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
+  }
+
+  /* ---- Разрешённые градиенты ---- */
+
+  /* 1. Главная кнопка действия */
+  .gradient-action {
+    background-image: linear-gradient(
+      135deg,
+      hsl(var(--primary)) 0%,
+      hsl(230 78% 56%) 60%,
+      hsl(var(--ai-violet)) 165%
+    );
+  }
+
+  .gradient-action:hover:not(:disabled) {
+    background-image: linear-gradient(
+      135deg,
+      hsl(var(--primary-hover)) 0%,
+      hsl(230 78% 50%) 60%,
+      hsl(258 74% 56%) 165%
+    );
+  }
+
+  /* 2. Небольшая AI-иллюстрация и знак сервиса */
+  .gradient-ai-mark {
+    background-image: linear-gradient(
+      140deg,
+      hsl(var(--primary)) 0%,
+      hsl(var(--ai-violet)) 72%,
+      hsl(var(--ai-cyan)) 135%
+    );
+  }
+
+  /* 3. Индикатор генерации */
+  .gradient-progress {
+    background-image: linear-gradient(
+      90deg,
+      hsl(var(--primary)) 0%,
+      hsl(var(--ai-violet)) 48%,
+      hsl(var(--ai-cyan)) 100%
+    );
+  }
+
+  /* 4. Активный статус ИИ */
+  .gradient-ai-status {
+    background-image: linear-gradient(
+      120deg,
+      hsl(var(--primary) / 0.10) 0%,
+      hsl(var(--ai-violet) / 0.12) 100%
+    );
+  }
+
+  /* 5. Один декоративный элемент hero-блока */
+  .gradient-hero-orb {
+    background-image: radial-gradient(
+      circle at 32% 30%,
+      hsl(var(--ai-cyan) / 0.5) 0%,
+      hsl(var(--primary) / 0.4) 46%,
+      hsl(var(--ai-violet) / 0.3) 100%
+    );
+  }
+
+  /* Свечение только на время работы модели, не постоянно */
+  .ai-working {
+    animation: ai-pulse 1.9s ease-in-out infinite;
+  }
+
+  /* Стеклянный эффект допускается лишь в маленьком плавающем AI-виджете */
+  .ai-widget-glass {
+    background-color: hsl(0 0% 100% / 0.84);
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    border: 1px solid hsl(var(--border));
+  }
+}
+
+@keyframes ai-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 hsl(var(--ai-violet) / 0);
+  }
+  50% {
+    box-shadow: 0 0 0 6px hsl(var(--ai-violet) / 0.14);
+  }
+}
+
+@keyframes progress-slide {
+  0% {
+    transform: translateX(-110%);
+  }
+  100% {
+    transform: translateX(420%);
+  }
+}
+
+@keyframes fade-rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
@@ -77,12 +229,31 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: hsl(220 12% 82%);
+  background-color: hsl(220 14% 84%);
   border-radius: 999px;
   border: 3px solid transparent;
   background-clip: content-box;
 }
 
+::-webkit-scrollbar-thumb:hover {
+  background-color: hsl(220 12% 76%);
+}
+
 ::-webkit-scrollbar-track {
   background: transparent;
+}
+
+/* Тёмная боковая панель получает свою полосу прокрутки */
+.sidebar-scroll::-webkit-scrollbar-thumb {
+  background-color: hsl(223 25% 32%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

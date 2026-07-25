@@ -30,8 +30,8 @@ import type { ActivityItem } from '@/types/api';
 const ACTIVITY_STYLES: Record<string, string> = {
   success: 'bg-success/10 text-success',
   error: 'bg-destructive/10 text-destructive',
-  warning: 'bg-warning/15 text-warning-foreground',
-  info: 'bg-accent text-accent-foreground',
+  warning: 'bg-warning/12 text-warning-foreground',
+  info: 'bg-secondary text-muted-foreground',
 };
 
 function activityIcon(item: ActivityItem) {
@@ -95,25 +95,31 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      {/* Приветственный блок */}
-      <Card className="overflow-hidden">
-        <div className="flex flex-col gap-6 p-6 lg:flex-row lg:items-center lg:justify-between lg:p-8">
+      {/* Приветственный блок. Единственный градиент на экране —
+          декоративный элемент справа. */}
+      <Card className="relative overflow-hidden">
+        <div
+          className="gradient-hero-orb pointer-events-none absolute -right-16 -top-20 hidden size-64 rounded-full opacity-25 sm:block"
+          aria-hidden
+        />
+
+        <div className="relative flex flex-col gap-6 p-6 lg:flex-row lg:items-end lg:justify-between lg:p-8">
           <div className="max-w-2xl space-y-3">
             <Badge variant="secondary">{data.project_name}</Badge>
-            <h1 className="text-2xl font-semibold sm:text-3xl">{data.greeting}</h1>
-            <p className="text-sm text-muted-foreground sm:text-base">
+            <h1 className="text-2xl font-semibold sm:text-[28px]">{data.greeting}</h1>
+            <p className="max-w-xl text-sm leading-relaxed text-muted-foreground">
               {data.user_name ? `${data.user_name}, здесь` : 'Здесь'} видно всё сразу: конкуренты,
               найденные темы, статьи и план публикаций. Начните с одного шага — сервис подскажет,
               с какого именно.
             </p>
 
-            <div className="max-w-sm space-y-2 pt-1">
-              <div className="flex items-center justify-between text-sm">
+            <div className="max-w-xs space-y-2 pt-2">
+              <div className="flex items-center justify-between text-[13px]">
                 <span className="text-muted-foreground">Настройка сервиса</span>
                 <span className="font-medium tabular-nums">{setupProgress}%</span>
               </div>
               <Progress value={setupProgress} />
-              <p className="text-xs text-muted-foreground">
+              <p className="text-2xs text-muted-foreground">
                 Выполнено {doneSteps} из {steps.length} шагов
               </p>
             </div>
@@ -172,7 +178,7 @@ export default function DashboardPage() {
                 key={step.code}
                 className={cn(
                   'rounded-md border p-4 transition-colors',
-                  step.done ? 'border-success/25 bg-success/5' : 'border-border bg-background',
+                  step.done ? 'border-success/20 bg-success/5' : 'border-border bg-surface',
                 )}
               >
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">

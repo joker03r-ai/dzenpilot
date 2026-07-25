@@ -8,21 +8,24 @@ import * as React from 'react';
 import { cn } from '@/lib/utils';
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all focus-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:size-4 [&_svg]:shrink-0',
+  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-ring disabled:pointer-events-none disabled:opacity-45 [&_svg]:size-4 [&_svg]:shrink-0',
   {
     variants: {
       variant: {
-        default: 'bg-primary text-primary-foreground shadow-sm hover:bg-primary/90 active:scale-[0.99]',
-        secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
-        outline: 'border border-input bg-card hover:bg-secondary',
-        ghost: 'hover:bg-secondary hover:text-secondary-foreground',
-        destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
+        // Главная кнопка действия — единственное место с постоянным градиентом
+        default: 'gradient-action text-primary-foreground shadow-subtle',
+        // Однотонная синяя: для вторичных подтверждений
+        solid: 'bg-primary text-primary-foreground shadow-subtle hover:bg-primary-hover',
+        secondary: 'bg-secondary text-secondary-foreground hover:bg-border',
+        outline: 'border border-border-strong bg-card text-foreground hover:bg-secondary',
+        ghost: 'text-muted-foreground hover:bg-secondary hover:text-foreground',
+        destructive: 'bg-destructive text-destructive-foreground hover:brightness-95',
         link: 'text-primary underline-offset-4 hover:underline',
       },
       size: {
-        sm: 'h-9 px-3',
-        default: 'h-10 px-4 py-2',
-        lg: 'h-12 px-6 text-base',
+        sm: 'h-8 px-3 text-[13px]',
+        default: 'h-10 px-4',
+        lg: 'h-11 px-5',
         icon: 'h-10 w-10',
       },
     },
@@ -35,10 +38,24 @@ export interface ButtonProps
     VariantProps<typeof buttonVariants> {
   asChild?: boolean;
   loading?: boolean;
+  loadingText?: string;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, loading = false, children, disabled, ...props }, ref) => {
+  (
+    {
+      className,
+      variant,
+      size,
+      asChild = false,
+      loading = false,
+      loadingText = 'Подождите…',
+      children,
+      disabled,
+      ...props
+    },
+    ref,
+  ) => {
     const Comp = asChild ? Slot : 'button';
     return (
       <Comp
@@ -50,7 +67,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         {loading ? (
           <>
             <Loader2 className="animate-spin" aria-hidden />
-            <span>Подождите…</span>
+            <span>{loadingText}</span>
           </>
         ) : (
           children

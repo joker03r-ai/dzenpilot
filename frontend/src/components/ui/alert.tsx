@@ -7,10 +7,10 @@ const alertVariants = cva('relative w-full rounded-lg border p-4 text-sm', {
   variants: {
     variant: {
       default: 'border-border bg-card text-card-foreground',
-      info: 'border-primary/20 bg-accent text-accent-foreground',
-      success: 'border-success/20 bg-success/10 text-success',
-      warning: 'border-warning/30 bg-warning/10 text-warning-foreground',
-      destructive: 'border-destructive/25 bg-destructive/10 text-destructive',
+      info: 'border-border bg-accent text-accent-foreground',
+      success: 'border-success/20 bg-success/8 text-success',
+      warning: 'border-warning/25 bg-warning/8 text-warning-foreground',
+      destructive: 'border-destructive/20 bg-destructive/8 text-destructive',
     },
   },
   defaultVariants: { variant: 'default' },

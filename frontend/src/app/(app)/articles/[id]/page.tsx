@@ -18,6 +18,7 @@ import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 import { ImproveToolbar } from '@/components/articles/improve-toolbar';
+import { AiProgress } from '@/components/common/ai-progress';
 import { EmptyState } from '@/components/common/empty-state';
 import { Hint } from '@/components/common/hint';
 import { PageHeader } from '@/components/common/page-header';
@@ -266,9 +267,10 @@ export default function ArticleEditorPage() {
           </div>
 
           {generateBody.isPending ? (
-            <Hint title="Идёт генерация">
-              Модель пишет статью. Это занимает от 30 секунд до двух минут — не закрывайте страницу.
-            </Hint>
+            <AiProgress
+              title="Модель пишет статью"
+              description="Это занимает от 30 секунд до двух минут. Не закрывайте страницу."
+            />
           ) : null}
 
           <Card>

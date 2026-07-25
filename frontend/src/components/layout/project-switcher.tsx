@@ -13,7 +13,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Skeleton } from '@/components/ui/skeleton';
 import { useProjects } from '@/hooks/use-projects';
 import { useProjectContext } from '@/lib/project-context';
 
@@ -33,7 +32,7 @@ export function ProjectSwitcher() {
   }, [ready, isLoading, projects, projectId, setProjectId]);
 
   if (isLoading) {
-    return <Skeleton className="h-14 w-full" />;
+    return <div className="h-[52px] w-full animate-pulse rounded-md bg-white/8" />;
   }
 
   return (
@@ -42,33 +41,29 @@ export function ProjectSwitcher() {
         <DropdownMenuTrigger asChild>
           <button
             type="button"
-            className="flex w-full items-center gap-2 rounded-md border border-border bg-background px-3 py-2.5 text-left transition-colors hover:bg-secondary focus-ring"
+            className="flex w-full items-center gap-2 rounded-md border border-sidebar-border bg-white/4 px-3 py-2 text-left transition-colors hover:bg-white/8 focus-ring"
           >
             <span className="min-w-0 flex-1">
-              <span className="block text-[11px] uppercase tracking-wide text-muted-foreground">
+              <span className="block text-2xs uppercase tracking-wide text-sidebar-muted">
                 Проект
               </span>
-              <span className="block truncate text-sm font-medium">
+              <span className="block truncate text-sm font-medium text-white">
                 {current?.name ?? 'Проект не выбран'}
               </span>
             </span>
-            <ChevronsUpDown className="size-4 shrink-0 text-muted-foreground" aria-hidden />
+            <ChevronsUpDown className="size-4 shrink-0 text-sidebar-muted" aria-hidden />
           </button>
         </DropdownMenuTrigger>
 
         <DropdownMenuContent align="start" className="w-[248px]">
           <DropdownMenuLabel>Ваши проекты</DropdownMenuLabel>
           {projects.length === 0 ? (
-            <p className="px-2.5 py-2 text-sm text-muted-foreground">
-              Пока ни одного проекта
-            </p>
+            <p className="px-2.5 py-2 text-sm text-muted-foreground">Пока ни одного проекта</p>
           ) : (
             projects.map((project) => (
               <DropdownMenuItem key={project.id} onSelect={() => setProjectId(project.id)}>
                 <Check
-                  className={
-                    project.id === projectId ? 'size-4 text-primary' : 'size-4 opacity-0'
-                  }
+                  className={project.id === projectId ? 'size-4 text-primary' : 'size-4 opacity-0'}
                   aria-hidden
                 />
                 <span className="truncate">{project.name}</span>

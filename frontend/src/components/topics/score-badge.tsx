@@ -10,11 +10,11 @@ interface ScoreBadgeProps {
 export function ScoreBadge({ score, verdict, size = 'sm' }: ScoreBadgeProps) {
   const tone =
     score >= 80
-      ? 'bg-success/12 text-success ring-success/25'
+      ? 'bg-success/10 text-success ring-success/20'
       : score >= 65
-        ? 'bg-primary/10 text-primary ring-primary/25'
+        ? 'bg-accent text-accent-foreground ring-primary/20'
         : score >= 50
-          ? 'bg-warning/15 text-warning-foreground ring-warning/30'
+          ? 'bg-warning/10 text-warning-foreground ring-warning/25'
           : 'bg-muted text-muted-foreground ring-border';
 
   return (

@@ -20,7 +20,7 @@ export function TopicCard({ projectId, topic }: { projectId: string; topic: Topi
   const updateTopic = useUpdateTopic(projectId);
 
   return (
-    <Card className="flex flex-col transition-shadow hover:shadow-lift">
+    <Card className="flex flex-col transition-colors hover:border-border-strong">
       <CardHeader className="pb-3">
         <div className="flex items-start gap-3">
           {topic.score ? (

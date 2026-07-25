@@ -3,6 +3,7 @@
 import { Wand2 } from 'lucide-react';
 import { useState } from 'react';
 
+import { AiProgress } from '@/components/common/ai-progress';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -145,11 +146,7 @@ export function ImproveToolbar({ projectId, articleId, hasBody }: ImproveToolbar
       </Card>
 
       {busy ? (
-        <Card>
-          <CardContent className="p-6 text-sm text-muted-foreground">
-            Модель работает. Обычно это занимает от 10 до 60 секунд.
-          </CardContent>
-        </Card>
+        <AiProgress description="Обычно это занимает от 10 до 60 секунд." />
       ) : null}
 
       {result ? (

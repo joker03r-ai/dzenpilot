@@ -28,7 +28,7 @@ export function CompetitorCard({ competitor, selected, onToggle }: CompetitorCar
   return (
     <Card
       className={cn(
-        'flex flex-col transition-shadow hover:shadow-lift',
+        'flex flex-col transition-colors hover:border-border-strong',
         selected && 'ring-2 ring-primary',
       )}
     >

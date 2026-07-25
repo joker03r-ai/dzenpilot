@@ -109,7 +109,7 @@ export default function ArticlesPage() {
       ) : (
         <div className="space-y-3">
           {articles.map((article) => (
-            <Card key={article.id} className="p-4 transition-shadow hover:shadow-lift">
+            <Card key={article.id} className="p-4 transition-colors hover:border-border-strong">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div className="min-w-0 flex-1">
                   <Link

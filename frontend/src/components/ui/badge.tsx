@@ -4,16 +4,18 @@ import * as React from 'react';
 import { cn } from '@/lib/utils';
 
 const badgeVariants = cva(
-  'inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium transition-colors',
+  'inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-2xs font-medium transition-colors',
   {
     variants: {
       variant: {
-        default: 'border-transparent bg-primary/10 text-primary',
+        default: 'border-transparent bg-accent text-accent-foreground',
         secondary: 'border-transparent bg-secondary text-secondary-foreground',
         outline: 'border-border text-muted-foreground',
         success: 'border-transparent bg-success/10 text-success',
-        warning: 'border-transparent bg-warning/15 text-warning-foreground',
+        warning: 'border-transparent bg-warning/12 text-warning-foreground',
         destructive: 'border-transparent bg-destructive/10 text-destructive',
+        // Точечный AI-акцент: только подписи, связанные с работой модели
+        ai: 'border-transparent bg-ai-lilac text-ai-violet',
       },
     },
     defaultVariants: { variant: 'default' },
