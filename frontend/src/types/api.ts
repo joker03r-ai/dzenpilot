@@ -169,3 +169,150 @@ export interface TimezoneOption {
   label: string;
   offset: string;
 }
+
+// ---------- Конкуренты ----------
+
+export type CompetitorStatus = 'new' | 'analyzing' | 'analyzed' | 'error';
+export type DataSource = 'manual' | 'csv_import' | 'public_page' | 'official_api' | 'ai_estimate';
+
+export interface Competitor {
+  id: string;
+  project_id: string;
+  name: string;
+  url: string | null;
+  description: string | null;
+  niche: string | null;
+  group_name: string | null;
+  notes: string | null;
+
+  subscribers_count: number | null;
+  publications_count: number | null;
+  avg_publish_interval_days: number | null;
+  avg_views: number | null;
+  max_views: number | null;
+  min_views: number | null;
+  avg_engagement_rate: number | null;
+  avg_article_length: number | null;
+
+  formats_used: { format: string; count: number }[];
+  frequent_topics: { topic: string; count: number }[];
+  popular_title_words: { word: string; count: number }[];
+  media_usage: Record<string, string>;
+
+  data_source: DataSource;
+  status: CompetitorStatus;
+  last_analyzed_at: string | null;
+  created_at: string;
+  updated_at: string;
+
+  stored_publications: number;
+  has_analysis: boolean;
+}
+
+export interface CompetitorInput {
+  name: string;
+  url?: string | null;
+  description?: string | null;
+  niche?: string | null;
+  group_name?: string | null;
+  notes?: string | null;
+}
+
+export interface Publication {
+  id: string;
+  competitor_id: string;
+  title: string;
+  url: string | null;
+  published_at: string | null;
+  views: number | null;
+  reactions: number | null;
+  comments_count: number | null;
+  topic_guess: string | null;
+  format: string | null;
+  title_length: number | null;
+  body_length: number | null;
+  title_emotionality: number | null;
+  has_numbers: boolean | null;
+  has_question: boolean | null;
+  has_cta: boolean | null;
+  audience_guess: string | null;
+  data_source: DataSource;
+  created_at: string;
+}
+
+export interface PublicationInput {
+  title: string;
+  url?: string | null;
+  published_at?: string | null;
+  views?: number | null;
+  reactions?: number | null;
+  comments_count?: number | null;
+  topic_guess?: string | null;
+  format?: string | null;
+}
+
+export interface CsvImportResult {
+  created: number;
+  updated: number;
+  skipped: number;
+  errors: string[];
+  message: string;
+}
+
+export interface CompetitorAnalysis {
+  id: string;
+  competitor_id: string;
+  summary: string | null;
+  why_it_works: string | null;
+  publish_rhythm: string | null;
+  working_topics: string[];
+  working_titles: string[];
+  failed_posts: string[];
+  formats: string[];
+  strengths: string[];
+  weaknesses: string[];
+  content_gaps: string[];
+  differentiation: string[];
+  adaptable_ideas: string[];
+  ai_provider: string | null;
+  ai_model: string | null;
+  tokens_input: number | null;
+  tokens_output: number | null;
+  cost_usd: number | null;
+  created_at: string;
+}
+
+export interface CompareRequest {
+  competitor_ids: string[];
+  period_days: number;
+}
+
+export interface CompareRow {
+  competitor_id: string;
+  name: string;
+  publish_interval_days: number | null;
+  publications_in_period: number;
+  avg_views: number | null;
+  max_views: number | null;
+  avg_engagement_rate: number | null;
+  avg_article_length: number | null;
+  best_topics: string[];
+  title_style: string;
+  dynamics_percent: number | null;
+  rating: number;
+  rating_reason: string;
+}
+
+export interface ComparePoint {
+  name: string;
+  avg_views: number | null;
+  publications: number;
+  engagement: number | null;
+}
+
+export interface CompareResponse {
+  period_days: number;
+  rows: CompareRow[];
+  chart: ComparePoint[];
+  note: string;
+}

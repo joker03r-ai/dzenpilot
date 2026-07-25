@@ -31,7 +31,6 @@ export const NAV_ITEMS: NavItem[] = [
     label: 'Конкуренты',
     description: 'Каналы вашей тематики и разбор их публикаций',
     icon: Users,
-    stage: 3,
   },
   {
     href: '/topics',
