@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 import { EmptyState } from '@/components/common/empty-state';
 import { Hint } from '@/components/common/hint';
 import { PageHeader } from '@/components/common/page-header';
+import { AppearanceSettings } from '@/components/settings/appearance-settings';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -14,6 +15,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Slider } from '@/components/ui/slider';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import { useChangePassword, useMe, useUpdateProfile } from '@/hooks/use-auth';
@@ -44,6 +46,7 @@ export default function SettingsPage() {
       <Tabs defaultValue="project">
         <TabsList className="flex-wrap">
           <TabsTrigger value="project">Проект</TabsTrigger>
+          <TabsTrigger value="appearance">Внешний вид</TabsTrigger>
           <TabsTrigger value="ai">Модель ИИ</TabsTrigger>
           <TabsTrigger value="profile">Профиль</TabsTrigger>
           <TabsTrigger value="security">Безопасность</TabsTrigger>
@@ -51,6 +54,9 @@ export default function SettingsPage() {
 
         <TabsContent value="project">
           <ProjectSettings projectId={projectId} />
+        </TabsContent>
+        <TabsContent value="appearance">
+          <AppearanceSettings />
         </TabsContent>
         <TabsContent value="ai">
           <AiSettings projectId={projectId} />
@@ -319,15 +325,13 @@ function AiSettings({ projectId }: { projectId: string }) {
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="temperature">Творческость: {temperature.toFixed(1)}</Label>
-              <input
+              <Slider
                 id="temperature"
-                type="range"
                 min={0}
                 max={1}
                 step={0.1}
                 value={temperature}
                 onChange={(event) => setTemperature(Number(event.target.value))}
-                className="w-full accent-primary"
               />
               <p className="text-xs text-muted-foreground">
                 Ниже — строже и предсказуемее, выше — живее и разнообразнее.

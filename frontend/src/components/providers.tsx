@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { Toaster } from 'sonner';
 
 import { ApiRequestError } from '@/lib/api';
+import { AppearanceProvider } from '@/lib/appearance-context';
 import { ProjectProvider } from '@/lib/project-context';
 
 export function Providers({ children }: { children: React.ReactNode }) {
@@ -31,7 +32,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ProjectProvider>{children}</ProjectProvider>
+      <AppearanceProvider>
+        <ProjectProvider>{children}</ProjectProvider>
+      </AppearanceProvider>
       <Toaster
         position="top-right"
         richColors
